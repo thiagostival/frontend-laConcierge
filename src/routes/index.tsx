@@ -10,6 +10,7 @@ import { SignUp } from "../pages/SignUp";
 
 //* PAGES CLIENT
 import { Dashboard } from "../pages/client/Dashboard";
+import { Dashboard as DashboardEstablishment } from "../pages/establishment/Dashboard";
 
 //* PAGES ESTABLISHMENT
 
@@ -31,9 +32,10 @@ export const Router: React.FC = () => {
 
       {/* AUTHENTICATED ROUTES CLIENT */}
       <Route path="/establishment" element={<AuthLayout />}>
-        <Route path="/establishment/dashboard" element={<div />} />
-
-        <Route path="/establishment/reservas" element={<div />} />
+        <Route
+          path="/establishment/dashboard"
+          element={<DashboardEstablishment />}
+        />
       </Route>
     </Routes>
   );

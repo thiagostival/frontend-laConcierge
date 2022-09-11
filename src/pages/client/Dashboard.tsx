@@ -5,6 +5,7 @@ import { RiFundsFill, RiRestaurantFill } from "react-icons/ri";
 
 // STYLES
 import {
+  Avatar,
   Box,
   Button,
   Circle,
@@ -158,11 +159,19 @@ export function Dashboard() {
                 >
                   <Flex gap="3" alignItems="center">
                     <Circle border="2px solid" borderColor="tomato" p="2">
-                      <Icon
-                        as={RiRestaurantFill}
-                        fontSize="25"
-                        color="tomato"
-                      />
+                      {item?.avatar_url ? (
+                        <Avatar
+                          size="md"
+                          name={item?.name}
+                          src={item.avatar_url}
+                        />
+                      ) : (
+                        <Icon
+                          as={RiRestaurantFill}
+                          fontSize="25"
+                          color="tomato"
+                        />
+                      )}
                     </Circle>
 
                     <Text>{item.name}</Text>

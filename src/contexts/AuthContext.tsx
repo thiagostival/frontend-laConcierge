@@ -13,7 +13,6 @@ import { api } from "../services/api";
 import { createSession, getUser } from "../services";
 
 // TYPES
-import { AxiosError } from "axios";
 import { IClient, IEstablishment } from "../types";
 type SignInCredentials = {
   email: string;
@@ -92,41 +91,33 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   async function signIn({ email, password }: SignInCredentials) {
-    try {
-      const {
-        data: { token, refresh_token, user },
-      } = await createSession().apiCall({
-        email,
-        password,
-      });
+    const {
+      data: { token, refresh_token, user },
+    } = await createSession().apiCall({
+      email,
+      password,
+    });
 
-      setCookie(undefined, "reactauth.token", token, {
-        path: "/", // Any address in the app will have access to the token
-        maxAge: 24 * 60 * 60 * 30, // 30 days - Who checks if it has expired is the back, front does not need
-      });
-      setCookie(undefined, "reactauth.refreshToken", refresh_token, {
-        path: "/",
-        maxAge: 24 * 60 * 60 * 30,
-      });
+    setCookie(undefined, "reactauth.token", token, {
+      path: "/", // Any address in the app will have access to the token
+      maxAge: 24 * 60 * 60 * 30, // 30 days - Who checks if it has expired is the back, front does not need
+    });
+    setCookie(undefined, "reactauth.refreshToken", refresh_token, {
+      path: "/",
+      maxAge: 24 * 60 * 60 * 30,
+    });
 
-      setUser({
-        email,
-        ...user,
-      });
+    setUser({
+      email,
+      ...user,
+    });
 
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      authChannel.postMessage({
-        message: "signIn",
-        is_establishment: user.is_establishment,
-      });
-    } catch (error) {
-      if ((error as AxiosError)?.response?.data) {
-        console.error((error as AxiosError)?.response?.data);
-      } else {
-        console.error(error);
-      }
-    }
+    authChannel.postMessage({
+      message: "signIn",
+      is_establishment: user.is_establishment,
+    });
   }
 
   return (
