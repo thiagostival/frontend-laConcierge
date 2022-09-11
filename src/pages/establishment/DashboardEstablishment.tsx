@@ -34,7 +34,7 @@ type ITableData = {
   }[];
 }[];
 
-export function Dashboard() {
+export function DashboardEstablishment() {
   const toast = useToast();
   const {
     register,

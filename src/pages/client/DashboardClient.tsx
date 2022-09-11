@@ -34,7 +34,7 @@ interface IListEstablishment extends IEstablishment {
   available: string;
 }
 
-export function Dashboard() {
+export function DashboardClient() {
   const [loading, setLoading] = useState(true);
   const [establishment, setEstablishment] = useState<IListEstablishment[]>([]);
 

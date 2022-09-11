@@ -9,8 +9,8 @@ import { SignIn } from "../pages/SignIn";
 import { SignUp } from "../pages/SignUp";
 
 //* PAGES CLIENT
-import { Dashboard } from "../pages/client/Dashboard";
-import { Dashboard as DashboardEstablishment } from "../pages/establishment/Dashboard";
+import { DashboardClient } from "../pages/client/DashboardClient";
+import { DashboardEstablishment } from "../pages/establishment/DashboardEstablishment";
 
 //* PAGES ESTABLISHMENT
 
@@ -25,7 +25,7 @@ export const Router: React.FC = () => {
 
       {/* AUTHENTICATED ROUTES CLIENT */}
       <Route path="/client" element={<AuthLayout />}>
-        <Route path="/client/dashboard" element={<Dashboard />} />
+        <Route path="/client/dashboard" element={<DashboardClient />} />
 
         <Route path="/client/reservas" element={<div />} />
       </Route>
