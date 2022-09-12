@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 // STYLES
 import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 
@@ -5,6 +7,8 @@ import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { useAuth } from "../../../contexts/AuthContext";
 
 export function Profile() {
+  const navigate = useNavigate();
+
   const { user } = useAuth();
 
   return (
@@ -16,7 +20,13 @@ export function Profile() {
         </Text>
       </Box>
 
-      <Avatar size="md" name={user?.name} src={user?.avatar_url} />
+      <Avatar
+        size="md"
+        name={user?.name}
+        src={user?.avatar_url}
+        cursor="pointer"
+        onClick={() => navigate("/users/me")}
+      />
     </Flex>
   );
 }

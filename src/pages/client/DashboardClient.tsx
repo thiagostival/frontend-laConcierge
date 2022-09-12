@@ -15,6 +15,7 @@ import {
   List,
   ListItem,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 
 // ASSETS
@@ -25,49 +26,44 @@ import { Loading } from "../../components/Loading";
 import { Carousel } from "../../components/Carousel";
 
 // SERVICES
-import { isCancel } from "../../services/api";
-import { getAllEstablishment } from "../../services";
+import { getListEstablishment } from "../../services";
 
 // TYPES
-import { IEstablishment } from "../../types";
-interface IListEstablishment extends IEstablishment {
-  available: string;
+interface IListEstablishment {
+  id: string;
+  name: string;
+  availableCapacity: string;
+  avatar_url?: string;
 }
 
 export function DashboardClient() {
+  const toast = useToast();
+
   const [loading, setLoading] = useState(true);
   const [establishment, setEstablishment] = useState<IListEstablishment[]>([]);
 
   const handleGetEstablishment = useCallback(async () => {
-    const { apiCall } = getAllEstablishment();
+    const { apiCall } = getListEstablishment();
 
     try {
       const { data } = await apiCall();
 
-      const formatted = (data as IEstablishment[]).map((item) => {
-        if (item?.busy_capacity && item?.max_capacity) {
-          const available = (item.busy_capacity * 100) / item.max_capacity;
-
-          return {
-            ...item,
-            available: `${available}%`,
-          };
-        }
-
-        return {
-          ...item,
-          available: "no info at this time",
-        };
-      });
-
-      setEstablishment(formatted);
+      setEstablishment(data);
 
       setLoading(false);
     } catch (err) {
-      console.error(err);
+      setLoading(false);
 
-      if (!isCancel) {
-        setLoading(false);
+      if (!toast.isActive("fail_load_data")) {
+        toast({
+          id: "fail_load_data",
+          title: "Failed to load",
+          description:
+            "There was a problem loading the data. Please try again later!",
+          status: "error",
+          isClosable: true,
+          position: "top-right",
+        });
       }
     }
   }, []);
@@ -179,7 +175,7 @@ export function DashboardClient() {
 
                   <Flex gap="3" alignItems="center">
                     <Icon as={RiFundsFill} fontSize="35" color="tomato" />
-                    <Text>{item.available}</Text>
+                    <Text>{item.availableCapacity} lugares</Text>
                   </Flex>
                 </Button>
               </ListItem>

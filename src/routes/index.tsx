@@ -11,6 +11,7 @@ import { SignUp } from "../pages/SignUp";
 //* PAGES CLIENT
 import { DashboardClient } from "../pages/client/DashboardClient";
 import { DashboardEstablishment } from "../pages/establishment/DashboardEstablishment";
+import { Profile } from "../pages/Profile";
 
 //* PAGES ESTABLISHMENT
 
@@ -21,6 +22,11 @@ export const Router: React.FC = () => {
       <Route path="/">
         <Route path="/" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+      </Route>
+
+      {/* AUTHENTICATED ROUTES */}
+      <Route path="/users" element={<AuthLayout />}>
+        <Route path="/users/me" element={<Profile />} />
       </Route>
 
       {/* AUTHENTICATED ROUTES CLIENT */}
