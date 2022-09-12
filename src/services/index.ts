@@ -94,6 +94,25 @@ export function deleteUser() {
   return { source, apiCall };
 }
 
+export function updateAvatar() {
+  const source = CancelToken.source();
+
+  function apiCall(file: File) {
+    var formData = new FormData();
+    formData.append("avatar", file);
+
+    return api.patch("/users/avatar", formData, {
+      cancelToken: source.token,
+      baseURL: import.meta.env.VITE_APP_API_AUTH,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  }
+
+  return { source, apiCall };
+}
+
 //! ESTABLISHMENT
 export function getEstablishment() {
   const source = CancelToken.source();

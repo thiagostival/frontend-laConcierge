@@ -4,9 +4,12 @@ import {
   useContext,
   useEffect,
   useState,
+  useCallback,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { setCookie, parseCookies, destroyCookie } from "nookies";
+
+import { useToast } from "@chakra-ui/react";
 
 // SERVICES
 import { api } from "../services/api";
@@ -26,6 +29,7 @@ type AuthContextData = {
   isAuthenticated: boolean;
   signIn: (credentials: SignInCredentials) => Promise<void>;
   signOut: () => void;
+  refreshUser: () => Promise<void>;
 };
 
 type AuthProviderProps = {
@@ -44,6 +48,8 @@ export function signOut() {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const toast = useToast();
+
   const [user, setUser] = useState<User>();
   const isAuthenticated = !!user;
 
@@ -120,6 +126,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     });
   }
 
+  const refreshUser = useCallback(async () => {
+    try {
+      const { apiCall } = getUser();
+
+      const { data } = await apiCall();
+
+      setUser(data);
+    } catch (error) {
+      if (!toast.isActive("fail_refresh_user")) {
+        toast({
+          id: "fail_refresh_user",
+          title: "Failed to get data user",
+          description:
+            "There was a problem in get data user. Please try again later!",
+          status: "error",
+          isClosable: true,
+          position: "top-right",
+        });
+      }
+    }
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -127,6 +155,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         isAuthenticated,
         signIn,
         signOut,
+        refreshUser,
       }}
     >
       {children}

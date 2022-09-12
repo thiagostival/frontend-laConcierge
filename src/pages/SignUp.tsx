@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { AxiosError } from "axios";
 
 import { RiArrowLeftLine } from "react-icons/ri";
 
@@ -28,7 +29,24 @@ export const SignUp: React.FC = () => {
     try {
       const { apiCall } = registerUser();
 
-      await apiCall(data as IRegisterUser);
+      let formattedData;
+      if (data.type_user === "establishment") {
+        const { cpf, birth_date, type_user, ...rest } = data;
+
+        formattedData = {
+          ...rest,
+          is_establishment: true,
+        };
+      } else {
+        const { cnpj, type_user, ...rest } = data;
+
+        formattedData = {
+          ...rest,
+          is_establishment: false,
+        };
+      }
+
+      await apiCall(formattedData as IRegisterUser);
 
       toast({
         id: "success_registration",
@@ -42,12 +60,14 @@ export const SignUp: React.FC = () => {
 
       navigate("/");
     } catch (err: any) {
+      let message = (err as AxiosError<{ message: string }>)?.response?.data
+        ?.message;
+
       toast({
         id: "error_registration",
         title: "Error when registering user",
         description:
-          err?.message ||
-          "Check the information and/or try again in a few moments",
+          message || "Check the information and/or try again in a few moments",
         status: "error",
         duration: 9000,
         position: "top-right",
