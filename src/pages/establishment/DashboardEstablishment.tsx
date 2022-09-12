@@ -184,13 +184,9 @@ export function DashboardEstablishment() {
 
   const handleLoadData = useCallback(() => {
     try {
-      if (!user?.max_capacity || !user?.busy_capacity) {
-        return;
-      }
-
       const newData = {
-        max_capacity: user?.max_capacity as number,
-        busy_capacity: user?.busy_capacity as number,
+        max_capacity: (user?.max_capacity as number) || 0,
+        busy_capacity: (user?.busy_capacity as number) || 0,
       };
       setData(newData);
 
@@ -200,15 +196,17 @@ export function DashboardEstablishment() {
     } catch (error) {
       setLoading(false);
 
-      toast({
-        id: "fail_load_data",
-        title: "Failed to load",
-        description:
-          "There was a problem loading the data. Please try again later!",
-        status: "error",
-        isClosable: true,
-        position: "top-right",
-      });
+      if (!toast.isActive("fail_load_data")) {
+        toast({
+          id: "fail_load_data",
+          title: "Failed to load",
+          description:
+            "There was a problem loading the data. Please try again later!",
+          status: "error",
+          isClosable: true,
+          position: "top-right",
+        });
+      }
     }
   }, [user?.max_capacity, user?.busy_capacity]);
 
