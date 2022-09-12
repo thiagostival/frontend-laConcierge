@@ -1,0 +1,20 @@
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: dockerfile
+    env_file: ./.env
+    environment:
+      - VITE_APP_VERSION=$VITE_APP_VERSION
+      - VITE_APP_API_AUTH=$VITE_APP_API_AUTH
+      - VITE_APP_API_OCCUPANCY=$VITE_APP_API_OCCUPANCY
+    volumes:
+      - ./:/app
+    ports:
+      - '3000:3000'
+    networks:
+      - network-laconcierge
+
+networks:
+  network-laconcierge:
+    external: true
