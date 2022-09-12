@@ -13,10 +13,6 @@ export function SideBarClient() {
           <NavLink icon={RiDashboardLine} to="/client/dashboard">
             Dashboard
           </NavLink>
-
-          <NavLink icon={RiContactsLine} to="/client/reservas">
-            Reservas
-          </NavLink>
         </NavSection>
       </Stack>
     </Box>

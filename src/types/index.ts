@@ -20,11 +20,23 @@ interface IClient extends IUser {
   birth_date: Date;
 }
 
-interface IRegisterUser extends Omit<IUser, "id" | "is_admin"> {
+interface IRegisterUser extends Omit<IUser, "id" | "is_admin" | "created_at"> {
   password: string;
   cnpj?: string;
   cpf?: string;
   birth_date?: string;
 }
 
-export type { IRegisterUser, IClient, IEstablishment };
+interface IUpdateMax {
+  id: string;
+  busyCapacity: number;
+  maxCapacity: number;
+}
+
+interface IUpdateBusy {
+  id: string;
+  busyCapacity: number;
+  maxCapacity: number;
+}
+
+export type { IRegisterUser, IClient, IEstablishment, IUpdateMax, IUpdateBusy };

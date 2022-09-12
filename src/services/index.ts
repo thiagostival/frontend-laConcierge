@@ -1,7 +1,7 @@
 import { api, CancelToken } from "./api";
 
 // TYPES
-import { IRegisterUser } from "../types";
+import { IRegisterUser, IUpdateBusy, IUpdateMax } from "../types";
 
 //! LOGIN
 export function createSession() {
@@ -16,6 +16,7 @@ export function createSession() {
       },
       {
         cancelToken: source.token,
+        baseURL: import.meta.env.VITE_APP_API_AUTH,
       }
     );
   }
@@ -23,12 +24,14 @@ export function createSession() {
   return { source, apiCall };
 }
 
+//! USERs
 export function getUser() {
   const source = CancelToken.source();
 
   function apiCall() {
     return api.get("/users", {
       cancelToken: source.token,
+      baseURL: import.meta.env.VITE_APP_API_AUTH,
     });
   }
 
@@ -70,8 +73,22 @@ export function registerUser() {
       },
       {
         cancelToken: source.token,
+        baseURL: import.meta.env.VITE_APP_API_AUTH,
       }
     );
+  }
+
+  return { source, apiCall };
+}
+
+export function deleteUser() {
+  const source = CancelToken.source();
+
+  function apiCall() {
+    return api.delete("/users/delete", {
+      cancelToken: source.token,
+      baseURL: import.meta.env.VITE_APP_API_AUTH,
+    });
   }
 
   return { source, apiCall };
@@ -84,6 +101,7 @@ export function getEstablishment() {
   function apiCall(id: string) {
     return api.get(`/establishment/${id}`, {
       cancelToken: source.token,
+      baseURL: import.meta.env.VITE_APP_API_AUTH,
     });
   }
 
@@ -96,7 +114,63 @@ export function getAllEstablishment() {
   function apiCall() {
     return api.get(`/establishment/all`, {
       cancelToken: source.token,
+      baseURL: import.meta.env.VITE_APP_API_AUTH,
     });
+  }
+
+  return { source, apiCall };
+}
+
+export function getListEstablishment() {
+  const source = CancelToken.source();
+
+  function apiCall() {
+    return api.get(`/establishment/list`, {
+      cancelToken: source.token,
+      baseURL: import.meta.env.VITE_APP_API_OCCUPANCY,
+    });
+  }
+
+  return { source, apiCall };
+}
+
+export function updateMaxEstablishment() {
+  const source = CancelToken.source();
+
+  function apiCall({ id, busyCapacity, maxCapacity }: IUpdateMax) {
+    return api.put(
+      `/establishment/updateMaxCapacity`,
+      {
+        id,
+        busyCapacity,
+        maxCapacity,
+      },
+      {
+        cancelToken: source.token,
+        baseURL: import.meta.env.VITE_APP_API_OCCUPANCY,
+      }
+    );
+  }
+
+  return { source, apiCall };
+}
+
+export function updateBusyEstablishment() {
+  const source = CancelToken.source();
+
+  function apiCall({ id, busyCapacity, maxCapacity }: IUpdateBusy) {
+    return api.put(
+      `/establishment/updateBusyCapacity`,
+      {
+        id,
+        busyCapacity,
+        maxCapacity,
+      },
+      {
+        cancelToken: source.token,
+        baseURL: import.meta.env.VITE_APP_API_OCCUPANCY,
+      }
+    );
   }
 
   return { source, apiCall };

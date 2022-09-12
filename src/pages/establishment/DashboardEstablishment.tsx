@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useState } from "react";
-import Chart from "react-apexcharts";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import Chart from "react-apexcharts";
+import axios from "axios";
 
 import { BiEdit } from "react-icons/bi";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
@@ -19,20 +20,21 @@ import {
 // COMPONENTS
 import { Input, InputProps } from "../../components/form/Input";
 import { Loading } from "../../components/Loading";
-import { Table } from "../../components/Table";
 
-import tableDataExample from "./data";
+// SERVICES
+import {
+  updateBusyEstablishment,
+  updateMaxEstablishment,
+} from "../../services";
+
+// HOOKS
+import { useAuth } from "../../contexts/AuthContext";
 
 // TYPES
 interface IData {
   max_capacity: number;
   busy_capacity: number;
 }
-type ITableData = {
-  columns: {
-    value: string;
-  }[];
-}[];
 
 export function DashboardEstablishment() {
   const toast = useToast();
@@ -46,12 +48,13 @@ export function DashboardEstablishment() {
     setValue,
   } = useForm();
 
+  const { user } = useAuth();
+
   const [data, setData] = useState<IData>({
     max_capacity: 0,
     busy_capacity: 0,
   });
   const [chartSeries, setChartSeries] = useState([0, 0]);
-  const [tableData, setTableData] = useState<ITableData>([]);
 
   const [updating, setUpdating] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -143,6 +146,24 @@ export function DashboardEstablishment() {
       setIsEdit(false);
       setUpdating(true);
 
+      const { apiCall: apiCallMax } = updateMaxEstablishment();
+      const { apiCall: apiCallBusy } = updateBusyEstablishment();
+
+      console.log(d);
+
+      await axios.all([
+        apiCallMax({
+          id: user?.id as string,
+          busyCapacity: d.busy_capacity,
+          maxCapacity: d.max_capacity,
+        }),
+        apiCallBusy({
+          id: user?.id as string,
+          busyCapacity: d.busy_capacity,
+          maxCapacity: d.max_capacity,
+        }),
+      ]);
+
       setData(d as IData);
 
       setUpdating(false);
@@ -163,13 +184,17 @@ export function DashboardEstablishment() {
 
   const handleLoadData = useCallback(() => {
     try {
-      setData({
-        max_capacity: 100,
-        busy_capacity: 33,
-      });
+      if (!user?.max_capacity || !user?.busy_capacity) {
+        return;
+      }
 
-      setTableData(tableDataExample);
-      setChartSeries([100, 33]);
+      const newData = {
+        max_capacity: user?.max_capacity as number,
+        busy_capacity: user?.busy_capacity as number,
+      };
+      setData(newData);
+
+      setChartSeries([newData.max_capacity, newData.busy_capacity]);
 
       setLoading(false);
     } catch (error) {
@@ -185,7 +210,7 @@ export function DashboardEstablishment() {
         position: "top-right",
       });
     }
-  }, []);
+  }, [user?.max_capacity, user?.busy_capacity]);
 
   useEffect(() => {
     handleLoadData();
@@ -312,7 +337,7 @@ export function DashboardEstablishment() {
         )}
       </Box>
 
-      <Box p="8" bg="gray.800" borderRadius={8} width="730px">
+      {/* <Box p="8" bg="gray.800" borderRadius={8} width="730px">
         <Text fontSize="xl" mb="4" fontWeight="bold">
           Reservations
         </Text>
@@ -364,7 +389,7 @@ export function DashboardEstablishment() {
             />
           </Box>
         )}
-      </Box>
+      </Box> */}
     </SimpleGrid>
   );
 }

@@ -19,7 +19,7 @@ type SignInCredentials = {
   password: string;
 };
 
-type User = IClient | IEstablishment;
+type User = IClient & IEstablishment;
 
 type AuthContextData = {
   user?: User;
