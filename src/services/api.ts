@@ -21,9 +21,7 @@ let isRefreshing = false;
 /** @description Queue of requests that must wait for the token refresh */
 let failedRequestsQueue: IFailedRequestQueue[] = [];
 
-export const api = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL,
-});
+export const api = axios.create();
 
 api.defaults.headers.common[
   "Authorization"

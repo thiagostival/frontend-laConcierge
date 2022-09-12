@@ -20,7 +20,7 @@ interface IClient extends IUser {
   birth_date: Date;
 }
 
-interface IRegisterUser extends Omit<IUser, "id" | "is_admin"> {
+interface IRegisterUser extends Omit<IUser, "id" | "is_admin" | "created_at"> {
   password: string;
   cnpj?: string;
   cpf?: string;

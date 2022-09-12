@@ -15,6 +15,7 @@ import {
   List,
   ListItem,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 
 // ASSETS
@@ -25,8 +26,7 @@ import { Loading } from "../../components/Loading";
 import { Carousel } from "../../components/Carousel";
 
 // SERVICES
-import { isCancel } from "../../services/api";
-import { getAllEstablishment } from "../../services";
+import { getListEstablishment } from "../../services";
 
 // TYPES
 import { IEstablishment } from "../../types";
@@ -35,39 +35,49 @@ interface IListEstablishment extends IEstablishment {
 }
 
 export function DashboardClient() {
+  const toast = useToast();
+
   const [loading, setLoading] = useState(true);
   const [establishment, setEstablishment] = useState<IListEstablishment[]>([]);
 
   const handleGetEstablishment = useCallback(async () => {
-    const { apiCall } = getAllEstablishment();
+    const { apiCall } = getListEstablishment();
 
     try {
       const { data } = await apiCall();
+      console.log(data);
 
-      const formatted = (data as IEstablishment[]).map((item) => {
-        if (item?.busy_capacity && item?.max_capacity) {
-          const available = (item.busy_capacity * 100) / item.max_capacity;
+      // const formatted = (data as IEstablishment[]).map((item) => {
+      //   if (item?.busy_capacity && item?.max_capacity) {
+      //     const available = (item.busy_capacity * 100) / item.max_capacity;
 
-          return {
-            ...item,
-            available: `${available}%`,
-          };
-        }
+      //     return {
+      //       ...item,
+      //       available: `${available}%`,
+      //     };
+      //   }
 
-        return {
-          ...item,
-          available: "no info at this time",
-        };
-      });
+      //   return {
+      //     ...item,
+      //     available: "no info at this time",
+      //   };
+      // });
 
-      setEstablishment(formatted);
+      // setEstablishment(formatted);
 
       setLoading(false);
     } catch (err) {
-      console.error(err);
-
-      if (!isCancel) {
-        setLoading(false);
+      setLoading(false);
+      if (!toast.isActive("fail_load_data")) {
+        toast({
+          id: "fail_load_data",
+          title: "Failed to load",
+          description:
+            "There was a problem loading the data. Please try again later!",
+          status: "error",
+          isClosable: true,
+          position: "top-right",
+        });
       }
     }
   }, []);
